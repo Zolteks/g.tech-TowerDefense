@@ -1,4 +1,6 @@
 import pyxel
+from player import Player
+from intellist import Intellist
 
 class Game:
 
@@ -8,14 +10,20 @@ class Game:
             128,
             128,
             fps=30,
-            quit_key=pyxel.KEY_TAB,
+            quit_key=pyxel.KEY_ESCAPE,
             capture_sec=30
         )
+        
+        self.player = Player()
+        self.ennemiesList = Intellist(20)
 
         pyxel.run(self.update, self.draw)
     
     def update(self):
-        print("update")
+        self.player.update()
     
     def draw(self):
-        print("draw")
+        pyxel.cls(0)
+        self.player.draw()
+        
+Game()
