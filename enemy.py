@@ -4,11 +4,8 @@ from gameObject import GameObject
 class Enemy(GameObject):
     
     def __init__(self, x, y, w, h, path):
-        self.x = x
-        self.y = y
-        self.w = w
-        self.h = h
-        self.speed = 2/30
+        super().__init__(x, y, w, h, 8)
+        self.speed = 8/30
         self.speedVect = {"x": 0, "y": -1}
         self.path = path
     
@@ -16,7 +13,6 @@ class Enemy(GameObject):
         self.x += self.speed * self.speedVect["x"]
         self.y += self.speed * self.speedVect["y"]
         
-        print(self.y,  self.path["yLimit"])
         if self.y < self.path["yLimit"]:
             self.speedVect = {"x": 1, "y": 0}
             
@@ -25,4 +21,4 @@ class Enemy(GameObject):
     
     def draw(self):
         # print(self.x, self.y)
-        pyxel.rectb(self.x, self.y, self.w, self.h, 8)
+        pyxel.rectb(self.x, self.y, self.w, self.h, self.color)

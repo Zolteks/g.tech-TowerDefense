@@ -7,7 +7,6 @@ class GameObject:
         self.y = y
         self.w = w
         self.h = h
-        self.speed = 1
         self.color = c
     
     def draw(self):
