@@ -9,7 +9,7 @@ class Intellist:
     def update(self, game=None):
         for i in range(self.size):
             if self.array[i]:
-                if type(self.array[i]) == Bullet:
+                if game:
                     self.array[i].update(game)
                 else:
                     self.array[i].update()

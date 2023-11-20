@@ -2,7 +2,7 @@ import pyxel
 import math
 from bullet import Bullet
 
-class Player:
+class Turret:
     
     def __init__(self, game):
         self.game = game
