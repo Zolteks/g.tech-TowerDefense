@@ -21,14 +21,19 @@ class TurretSpace(GameObject):
     
     def placeTurret(self, turretType="classic"):
         if turretType == "classic":
+            self.turret = Turret(self.game, self.x, self.y, self.w, self.h)
+        if turretType == "sniper":
             self.turret = Sniper(self.game, self.x, self.y, self.w, self.h)
     
     def update(self):
-        if pyxel.btn(pyxel.MOUSE_BUTTON_RIGHT):
-            mouseX = pyxel.mouse_x
-            mouseY = pyxel.mouse_y
+        mouseX = pyxel.mouse_x
+        mouseY = pyxel.mouse_y
+        if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT):
             if mouseX > self.x and mouseX < self.x+self.w and mouseY > self.y and mouseY < self.y+self.h:
-                self.placeTurret()
+                self.placeTurret("classic")
+        elif pyxel.btn(pyxel.MOUSE_BUTTON_RIGHT):
+            if mouseX > self.x and mouseX < self.x+self.w and mouseY > self.y and mouseY < self.y+self.h:
+                self.placeTurret("sniper")
         if self.turret:
             self.turret.update()
 
@@ -40,8 +45,7 @@ class Turret(GameObject):
         self.fireCooldown = tweening.TimedBool(15)
         self.range = 80
         self.target = None
-        self.damage = 1
-        self.bulletSpeed = 2
+        self.type = "classic"
     
     def getDistance(self, enemy):
         x = enemy.x+enemy.w/2
@@ -80,17 +84,16 @@ class Turret(GameObject):
         #     pyxel.line(self.x + self.w, self.y + self.h, self.target.x, self.target.y, self.color)
     
     def shoot(self):
-        directionX = (self.target.x + self.target.w/2 + self.target.speedVect["x"]*self.target.speed*30) - (self.x + self.w/2)
-        directionY = (self.target.y + self.target.h/2 + self.target.speedVect["y"]*self.target.speed*30) - (self.y + self.h/2)
+        directionX = (self.target.x + self.target.w/2 + self.target.speedVect["x"]*self.target.speed*10) - (self.x + self.w/2)
+        directionY = (self.target.y + self.target.h/2 + self.target.speedVect["y"]*self.target.speed*10) - (self.y + self.h/2)
         norme = math.sqrt(directionX**2 + directionY**2)
         direction = {"x": directionX/norme, "y": directionY/norme}
-        self.game.bullets.add(Bullet(self.x + self.w/2, self.y + self.h/2, 2, 2, direction, self.range, self.damage, self.bulletSpeed))
+        self.game.bullets.add(Bullet(self.x + self.w/2, self.y + self.h/2, 2, 2, direction, self.type, self.range))
 
 class Sniper(Turret):
     
     def __init__(self, game, x, y, w, h):
         super().__init__(game, x, y, w, h, 5)
         self.fireCooldown = tweening.TimedBool(60*3)
-        self.damage = 10
         self.range = 120
-        self.bulletSpeed = 10
+        self.type = "sniper"
