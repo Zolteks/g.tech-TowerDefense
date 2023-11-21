@@ -8,8 +8,12 @@ class Enemy(GameObject):
         self.speed = 8/30
         self.speedVect = {"x": 0, "y": -1}
         self.path = path
+        self.life = 10
     
-    def update(self):
+    def update(self, game):
+        if self.life < 1:
+            game.enemies.delete(self)
+        
         self.x += self.speed * self.speedVect["x"]
         self.y += self.speed * self.speedVect["y"]
         
@@ -22,3 +26,6 @@ class Enemy(GameObject):
     def draw(self):
         # print(self.x, self.y)
         pyxel.rectb(self.x, self.y, self.w, self.h, self.color)
+    
+    def takeDamage(self, damage):
+        self.life -= damage

@@ -23,7 +23,7 @@ class Game:
         self.enemies = Intellist(50)
         self.bullets = Intellist(100)
         # self.enemies.add(Enemy(108, 108, 10, 10))
-        self.enemySpawnCD = tweening.TimedBool(20)
+        self.enemySpawnCD = tweening.TimedBool(60*2)
         self.turrets = Intellist(10)
         self.spawnEnemy()
         self.turrets.add(player.TurretSpace(self, 5, 5))
@@ -32,10 +32,29 @@ class Game:
         pyxel.run(self.update, self.draw)
     
     def update(self):
-        # self.player.update()
-        self.enemies.update()
+        self.enemies.update(self)
         self.bullets.update(self)
         self.turrets.update()
+        self.checkCollisions()
+        if self.enemySpawnCD.elapsed():
+            self.spawnEnemy()
+            self.enemySpawnCD.reset()
+    
+    def rect_overlap(self, bullet, enemy):
+        return bullet.x < enemy.x + enemy.w and bullet.x + bullet.w > enemy.x and bullet.y < enemy.y + enemy.h and bullet.y + bullet.h > enemy.y
+    
+    def checkCollisions(self):
+        for i in range(self.bullets.size):
+            if not self.bullets.array[i]:
+                continue
+            curB = self.bullets.array[i]
+            for j in range(self.enemies.size):
+                if not self.enemies.array[j]:
+                    continue
+                curE = self.enemies.array[j]
+                if self.rect_overlap(curB, curE):
+                    curE.takeDamage(curB.damage)
+                    self.bullets.delete(curB)
     
     def spawnEnemy(self):
         enemyW = 10
@@ -53,15 +72,10 @@ class Game:
         pyxel.rect(self.screenW-30, 0, 30, self.screenH, color)
         pyxel.rect(60, 60, self.screenW-30*4, self.screenH, color)
 
-        
-        if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) and self.enemySpawnCD.elapsed():
-            self.spawnEnemy()
-            self.enemySpawnCD.reset()
-
         # self.player.draw()
         self.turrets.draw()
         self.enemies.draw()
-        # self.bullets.draw()
+        self.bullets.draw()
         
         pyxel.rect(pyxel.mouse_x, pyxel.mouse_y, 1, 1, 7)
         
