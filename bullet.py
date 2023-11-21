@@ -3,15 +3,22 @@ import tweening
 
 class Bullet:
     
-    def __init__(self, x, y, w, h, d, range=60, damage=1, speed=2):
+    def __init__(self, x, y, w, h, d, bulletType, range):
         self.x = x
         self.y = y
         self.w = w
         self.h = h
-        self.speed = speed
         self.speedVect = d
-        self.alive = tweening.TimedBool(range/self.speed)
-        self.damage = damage
+        if bulletType == "classic":
+            self.speed = 2
+            self.damage = 1
+            self.alive = tweening.TimedBool(range/self.speed)
+            self.color = 8
+        if bulletType == "sniper":
+            self.speed = 10
+            self.damage = 10
+            self.alive = tweening.TimedBool(range/self.speed)
+            self.color = 7
     
     def update(self, game):
         self.x += self.speed * self.speedVect["x"]
@@ -30,4 +37,4 @@ class Bullet:
         #     game.bullets.delete(self)
     
     def draw(self):
-        pyxel.rectb(self.x, self.y, self.w, self.h, 8)
+        pyxel.rectb(self.x, self.y, self.w, self.h, self.color)
