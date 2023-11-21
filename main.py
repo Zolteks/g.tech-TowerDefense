@@ -27,6 +27,8 @@ class Game:
         self.turrets = Intellist(10)
         self.spawnEnemy()
         self.turrets.add(player.TurretSpace(self, 5, 5))
+        self.turrets.add(player.TurretSpace(self, 5+25, 5))
+        self.turrets.add(player.TurretSpace(self, 5+25+25, 5))
         self.turrets.add(player.TurretSpace(self, 200 - 25, 5))
 
         pyxel.run(self.update, self.draw)

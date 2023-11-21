@@ -1,1 +1,3 @@
-/__pycache__
+# Ignore all the recursive
+**/__pycache__
+**/*.pyc
