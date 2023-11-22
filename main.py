@@ -20,6 +20,7 @@ class Game:
         )
         
         self.building = False
+        self.life = 20
         self.enemySpawnCD = tweening.TimedBool(60*2)
         self.enemies = Intellist(50)
         self.bullets = Intellist(100)
@@ -32,6 +33,8 @@ class Game:
         pyxel.run(self.update, self.draw)
     
     def update(self):
+        if self.life < 1:
+            pyxel.quit()
         self.enemies.update(self)
         self.bullets.update(self)
         self.turrets.update()
@@ -39,6 +42,9 @@ class Game:
         if self.enemySpawnCD.elapsed():
             self.spawnEnemy()
             self.enemySpawnCD.reset()
+    
+    def initLevel(self):
+        return
     
     def rect_overlap(self, bullet, enemy):
         return bullet.x < enemy.x + enemy.w and bullet.x + bullet.w > enemy.x and bullet.y < enemy.y + enemy.h and bullet.y + bullet.h > enemy.y
@@ -70,8 +76,10 @@ class Game:
         pyxel.rect(0, 0, self.screenW, 30, color)
         pyxel.rect(0, 0, 30, self.screenH, color)
         pyxel.rect(self.screenW-30, 0, 30, self.screenH, color)
+        pyxel.rect(self.screenW-60, self.screenH-10, 30, 10, 11)
         pyxel.rect(60, 60, self.screenW-30*4, self.screenH, color)
 
+        pyxel.text(65, self.screenH-10, f"life: {self.life}", 7)
         # self.player.draw()
         self.enemies.draw()
         self.bullets.draw()
