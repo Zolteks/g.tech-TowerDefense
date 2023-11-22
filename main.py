@@ -19,16 +19,14 @@ class Game:
             capture_sec=30
         )
         
-        # self.player = Turret(self)
+        self.building = False
+        self.enemySpawnCD = tweening.TimedBool(60*2)
         self.enemies = Intellist(50)
         self.bullets = Intellist(100)
-        # self.enemies.add(Enemy(108, 108, 10, 10))
-        self.enemySpawnCD = tweening.TimedBool(60*2)
         self.turrets = Intellist(10)
-        self.spawnEnemy()
         self.turrets.add(player.TurretSpace(self, 5, 5))
-        self.turrets.add(player.TurretSpace(self, 5+25, 5))
-        self.turrets.add(player.TurretSpace(self, 5+25+25, 5))
+        self.turrets.add(player.TurretSpace(self, 5 + 25, 5))
+        self.turrets.add(player.TurretSpace(self, 5 + 25 + 25, 5))
         self.turrets.add(player.TurretSpace(self, 200 - 25, 5))
 
         pyxel.run(self.update, self.draw)
@@ -75,9 +73,9 @@ class Game:
         pyxel.rect(60, 60, self.screenW-30*4, self.screenH, color)
 
         # self.player.draw()
-        self.turrets.draw()
         self.enemies.draw()
         self.bullets.draw()
+        self.turrets.draw()
         
         pyxel.rect(pyxel.mouse_x, pyxel.mouse_y, 1, 1, 7)
         

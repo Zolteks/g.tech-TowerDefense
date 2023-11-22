@@ -18,6 +18,21 @@ class TurretSpace(GameObject):
             pyxel.rectb(self.x, self.y, self.w, self.h, self.color)
             pyxel.line(self.x, self.y, self.x + self.w-1, self.y + self.h-1, self.color)
             pyxel.line(self.x + self.w-1, self.y, self.x, self.y + self.h-1, self.color)
+        
+        if self.game.building:
+            originX = 35
+            originY = 35
+            pyxel.rect(originX, originY, self.game.screenW - originX*2, self.game.screenH/2, 0)
+            pyxel.rectb(originX, originY, self.game.screenW - originX*2, self.game.screenH/2, 10)
+
+            # button 1
+            pyxel.rect(originX + 10, originY + 10, 30, 30, 10)
+            pyxel.rect(originX + 10*2 + 30, originY + 10, 30, 30, 5)
+            pyxel.rect(originX + 10*2 + 30 + 10 + 30, originY + 10, 30, 30, 11)
+            # pyxel.text()
+
+            # button 2
+            # button 3
     
     def placeTurret(self, turretType="classic"):
         if turretType == "classic":
@@ -28,12 +43,12 @@ class TurretSpace(GameObject):
     def update(self):
         mouseX = pyxel.mouse_x
         mouseY = pyxel.mouse_y
-        if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT):
+        if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) and not self.game.building:
             if mouseX > self.x and mouseX < self.x+self.w and mouseY > self.y and mouseY < self.y+self.h:
-                self.placeTurret("classic")
+                self.game.building = True
+                # self.placeTurret("classic")
         elif pyxel.btn(pyxel.MOUSE_BUTTON_RIGHT):
-            if mouseX > self.x and mouseX < self.x+self.w and mouseY > self.y and mouseY < self.y+self.h:
-                self.placeTurret("sniper")
+            self.game.building = False
         if self.turret:
             self.turret.update()
 
