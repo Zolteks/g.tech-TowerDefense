@@ -19,6 +19,7 @@ class Game:
             capture_sec=30
         )
         
+        self.state = "menu"
         self.building = False
         self.life = 20
         self.enemySpawnCD = tweening.TimedBool(60*2)
@@ -33,6 +34,19 @@ class Game:
         pyxel.run(self.update, self.draw)
     
     def update(self):
+        if self.state == "menu":
+            self.updateMenu()
+        elif self.state == "level":
+            self.updateLevel()
+        
+    def updateMenu(self):
+        mouseX, mouseY = pyxel.mouse_x, pyxel.mouse_y
+        
+        if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) and mouseX > 30 and mouseX < 30+50 and mouseY > 30 and mouseY < 30+10:
+            self.state = "level"
+            self.initLevel()
+    
+    def updateLevel(self):
         if self.life < 1:
             pyxel.quit()
         self.enemies.update(self)
@@ -44,7 +58,7 @@ class Game:
             self.enemySpawnCD.reset()
     
     def initLevel(self):
-        return
+        self.enemySpawnCD.reset()
     
     def rect_overlap(self, bullet, enemy):
         return bullet.x < enemy.x + enemy.w and bullet.x + bullet.w > enemy.x and bullet.y < enemy.y + enemy.h and bullet.y + bullet.h > enemy.y
@@ -70,6 +84,19 @@ class Game:
         self.enemies.add(Enemy(spawnX, spawnY, enemyW, enemyH, {"xLimit": self.screenW - 40 -10, "yLimit": 40} ))
     
     def draw(self):
+        if self.state == "menu":
+            self.drawMenu()
+        elif self.state == "level":
+            self.drawLevel()
+        
+        pyxel.rect(pyxel.mouse_x, pyxel.mouse_y, 1, 1, 7)
+        
+    def drawMenu(self):
+        pyxel.cls(0)
+        pyxel.rect(30, 30, 50, 10, 11)
+        pyxel.text(31, 31, "Start Game", 0)
+    
+    def drawLevel(self):
         pyxel.cls(13)
         color = 4
         
@@ -84,7 +111,5 @@ class Game:
         self.enemies.draw()
         self.bullets.draw()
         self.turrets.draw()
-        
-        pyxel.rect(pyxel.mouse_x, pyxel.mouse_y, 1, 1, 7)
         
 Game()
