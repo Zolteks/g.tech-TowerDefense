@@ -1,6 +1,7 @@
 import pyxel
 import math
 import tweening
+import time
 from gameObject import GameObject
 from bullet import Bullet
 
@@ -10,6 +11,8 @@ class TurretSpace(GameObject):
         super().__init__(x, y, 20, 20, 7)
         self.game = game
         self.turret = None
+        self.normalPrice = 50
+        self.sniperPrice = 100
     
     def draw(self):
         if self.turret:
@@ -25,17 +28,36 @@ class TurretSpace(GameObject):
         if turretType == "sniper":
             self.turret = Sniper(self.game, self.x, self.y, self.w, self.h)
     
-    def update(self):
+    def update(self, game):
         mouseX = pyxel.mouse_x
         mouseY = pyxel.mouse_y
-        if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT):
+        if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
             if mouseX > self.x and mouseX < self.x+self.w and mouseY > self.y and mouseY < self.y+self.h:
-                self.placeTurret("classic")
-        elif pyxel.btn(pyxel.MOUSE_BUTTON_RIGHT):
+                if self.normalPrice <= game.ressources.intGold:
+                    self.placeTurret("classic")
+                    game.ressources.intGold -= self.normalPrice
+                    game.ressources.message  = "Classic Turret Done ! - 50 Gold"
+                    game.ressources.messageCD.reset()
+                else :
+                    game.ressources.message  = "Not enough money !"
+                    game.ressources.messageCD.reset()
+        elif pyxel.btnp(pyxel.MOUSE_BUTTON_RIGHT):
             if mouseX > self.x and mouseX < self.x+self.w and mouseY > self.y and mouseY < self.y+self.h:
-                self.placeTurret("sniper")
+                if self.sniperPrice <= game.ressources.intGold :
+                    self.placeTurret("sniper")
+                    game.ressources.intGold -= self.sniperPrice
+                    game.ressources.message  = "Sniper Turret Done ! - 100 Gold"
+                    game.ressources.messageCD.reset()
+                else :
+                    game.ressources.message  = "Not enough money !"
+                    game.ressources.messageCD.reset()
+        
+        if game.ressources.messageCD.elapsed():
+            game.ressources.message = ""
+        
         if self.turret:
             self.turret.update()
+            game.ressources.message=""
 
 class Turret(GameObject):
     
@@ -97,3 +119,14 @@ class Sniper(Turret):
         self.fireCooldown = tweening.TimedBool(60*3)
         self.range = 120
         self.type = "sniper"
+        
+class Ressources :
+    def __init__(self):
+        self.messageCD = tweening.TimedBool(60*2)
+        self.intGold = 100
+        self.strGold = str(self.intGold)
+        
+        self.intScenarium = 0
+        self.strScenarium = str(self.intScenarium)
+        
+        self.message = ""
