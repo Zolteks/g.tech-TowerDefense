@@ -1,7 +1,7 @@
 import pyxel
 import math
 import tweening
-import time
+from shockWave import ShockWave
 from gameObject import GameObject
 from bullet import Bullet
 
@@ -161,3 +161,10 @@ class Tesla(Turret):
         self.fireCooldown = tweening.TimedBool(60*2)
         self.range = 60
         self.type = "tesla"
+    
+    def shoot(self):
+        directionX = (self.target.x + self.target.w/2 + self.target.speedVect["x"]*self.target.speed*10) - (self.x + self.w/2)
+        directionY = (self.target.y + self.target.h/2 + self.target.speedVect["y"]*self.target.speed*10) - (self.y + self.h/2)
+        norme = math.sqrt(directionX**2 + directionY**2)
+        direction = {"x": directionX/norme, "y": directionY/norme}
+        self.game.bullets.add(ShockWave(self.x + self.w/2, self.y + self.h/2, 2, 2, direction, self.range))

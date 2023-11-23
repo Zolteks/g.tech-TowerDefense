@@ -20,10 +20,10 @@ class Bullet:
             self.alive = tweening.TimedBool(range/self.speed)
             self.color = 7
         if bulletType == "tesla":
-            self.speed = 10
+            self.speed = 1
             self.damage = 10
             self.alive = tweening.TimedBool(range/self.speed)
-            self.color = 7
+            self.color = 3
     
     def update(self, game):
         self.x += self.speed * self.speedVect["x"]
