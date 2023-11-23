@@ -10,18 +10,21 @@ class Bullet:
         self.h = h
         self.speedVect = d
         self.damage = damage
+        self.type = ""
         if bulletType == "classic":
             self.speed = 2
             self.alive = tweening.TimedBool(range/self.speed)
+            self.type = "classic"
             self.color = 8
         if bulletType == "sniper":
             self.speed = 10
             self.alive = tweening.TimedBool(range/self.speed)
+            self.type = "sniper"
             self.color = 7
         if bulletType == "tesla":
-            self.speed = 10
+            self.speed = 1
             self.alive = tweening.TimedBool(range/self.speed)
-            self.color = 7
+            self.color = 3
     
     def update(self, game):
         self.x += self.speed * self.speedVect["x"]

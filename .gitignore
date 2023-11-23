@@ -1,3 +1,7 @@
 # Ignore all the recursive
 **/__pycache__
 **/*.pyc
+**/TowerDefense.onefile-build
+**/TowerDefense.dist
+**/TowerDefense.build
+**/TowerDefense.py
