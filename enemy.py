@@ -15,6 +15,7 @@ class Enemy(GameObject):
     def update(self, game):
         if self.life < 1:
             game.gold += self.goldValue
+            game.scenarium += self.scenariumValue
             game.enemies.delete(self)
         
         self.x += self.speed * self.speedVect["x"]
@@ -50,7 +51,7 @@ class mediumEnemy(Enemy):
         self.speed = 8/30
         self.speedVect = {"x": 0, "y": -1}
         self.path = path
-        self.life = 10
+        self.life = 25
         self.goldValue = 25
         self.scenariumValue = 5
 class bigEnemy(Enemy):
@@ -60,6 +61,6 @@ class bigEnemy(Enemy):
         self.speed = 8/30
         self.speedVect = {"x": 0, "y": -1}
         self.path = path
-        self.life = 10
+        self.life = 150
         self.goldValue = 100
         self.scenariumValue = 25

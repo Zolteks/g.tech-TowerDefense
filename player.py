@@ -14,8 +14,21 @@ class TurretSpace(GameObject):
         self.gatlingPrice = 50
         self.sniperPrice = 100
         self.teslaPrice = 200
+        self.gatlingPriceScenarium = 25
+        self.sniperPriceScenarium = 75
+        self.teslaPriceScenarium = 150
+        self.message = ""
+        self.messageCooldown = tweening.TimedBool(60*3)
     
     def draw(self):
+        originX = 35
+        originY = 35
+        t1X = originX + 10
+        t1Y = originY + 10
+        t2X = t1X + 40
+        t2Y = t1Y
+        t3X = t2X + 40
+        t3Y = originY + 10
         if self.turret:
             self.turret.draw()
         else:
@@ -24,14 +37,6 @@ class TurretSpace(GameObject):
             pyxel.line(self.x + self.w-1, self.y, self.x, self.y + self.h-1, self.color)
         
         if self.game.building:
-            originX = 35
-            originY = 35
-            t1X = originX + 10
-            t1Y = originY + 10
-            t2X = t1X + 40
-            t2Y = t1Y
-            t3X = t2X + 40
-            t3Y = originY + 10
             pyxel.rect(originX, originY, self.game.screenW - originX*2, self.game.screenH/2, 0)
             pyxel.rectb(originX, originY, self.game.screenW - originX*2, self.game.screenH/2, 10)
 
@@ -46,6 +51,24 @@ class TurretSpace(GameObject):
             # button 3
             pyxel.rect(t3X, t3Y, 30, 30, 11)
             pyxel.text(t3X, t3Y + 35, str(self.teslaPrice), 7)
+            pyxel.text(t2X-len(self.message), t2Y + 45, str(self.message), 7)
+            
+        elif self.game.upgrade:
+            pyxel.rect(originX, originY, self.game.screenW - originX*2, self.game.screenH/2, 0)
+            pyxel.rectb(originX, originY, self.game.screenW - originX*2, self.game.screenH/2, 10)
+
+            # button 1
+            pyxel.rect(t1X, t1Y, 30, 30, 10)
+            pyxel.text(t1X, t1Y + 35, str(self.gatlingPriceScenarium), 7)
+
+            # button 2
+            pyxel.rect(t2X, t2Y, 30, 30, 5)
+            pyxel.text(t2X, t2Y + 35, str(self.sniperPriceScenarium), 7)
+            
+            # button 3
+            pyxel.rect(t3X, t3Y, 30, 30, 11)
+            pyxel.text(t3X, t3Y + 40, str(self.teslaPriceScenarium), 7)
+            pyxel.text(t2X-len(self.message), t2Y + 35, str(self.message), 7)
     
     def placeTurret(self, turretType="classic"):
         if turretType == "classic":
@@ -65,8 +88,13 @@ class TurretSpace(GameObject):
             if mouseX > self.x and mouseX < self.x+self.w and mouseY > self.y and mouseY < self.y+self.h:
                 self.game.building = self
                 # self.placeTurret("classic")
-        elif pyxel.btn(pyxel.MOUSE_BUTTON_RIGHT):
+        elif pyxel.btn(pyxel.MOUSE_BUTTON_RIGHT) and not self.game.building:
+            if mouseX > self.x and mouseX < self.x+self.w and mouseY > self.y and mouseY < self.y+self.h:
+                self.game.upgrade = self
+        elif pyxel.btn(pyxel.KEY_BACKSPACE):
             self.game.building = False
+            self.game.upgrade = False
+            self.message = ""
         if self.turret:
             self.turret.update()
         if self.game.building:
@@ -79,19 +107,109 @@ class TurretSpace(GameObject):
             t2Y = t1Y
             t3X = t2X + 40
             t3Y = originY + 10
-            if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT):
+            if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
                 # turret 1
-                if mouseX > t1X and mouseX < t1X + size and mouseY > t1Y and mouseY < t1Y + size and self.game.gold >= self.gatlingPrice:
-                    self.game.building.placeTurret("classic")
-                    self.game.building = False
+                if mouseX > t1X and mouseX < t1X + size and mouseY > t1Y and mouseY < t1Y + size:
+                    if self.gatlingPrice <= self.game.gold:
+                        if not self.game.building.turret or self.game.building.turret.type != "classic":
+                            self.game.building.placeTurret("classic")
+                            self.game.messageGlobal = "Turret build ! \n - 50 gold"
+                            self.game.building = False
+                            print(f"Current message: {self.message}")
+                        else:
+                            self.message = "There is already one !"
+                            print(f"Current message: {self.message}")
+                    else:
+                        self.message = "Not enough gold !"
+                        print(f"Current message: {self.message}")
+
                 # turret 2
-                if mouseX > t2X and mouseX < t2X + size and mouseY > t2Y and mouseY < t2Y + size and self.game.gold >= self.sniperPrice:
-                    self.game.building.placeTurret("sniper")
-                    self.game.building = False
+                if mouseX > t2X and mouseX < t2X + size and mouseY > t2Y and mouseY < t2Y + size:
+                    if self.sniperPrice <= self.game.gold:
+                        if not self.game.building.turret or self.game.building.turret.type != "sniper":
+                            self.game.building.placeTurret("sniper")
+                            self.game.messageGlobal = "Turret build ! \n - 100 gold"
+                            self.game.building = False
+                            print(f"Current message: {self.message}")
+                        else:
+                            self.message = "There is already one !"
+                            print(f"Current message: {self.message}")
+                    else:
+                        self.message = "Not enough gold !"
+                        print(f"Current message: {self.message}")
+
                 # turret 3
-                if mouseX > t3X and mouseX < t3X + size and mouseY > t3Y and mouseY < t3Y + size and self.game.gold >= self.teslaPrice:
-                    self.game.building.placeTurret("tesla")
-                    self.game.building = False
+                if mouseX > t3X and mouseX < t3X + size and mouseY > t3Y and mouseY < t3Y + size:
+                    if self.teslaPrice <= self.game.gold:
+                        if not self.game.building.turret or self.game.building.turret.type != "tesla":
+                            self.game.building.placeTurret("tesla")
+                            self.game.messageGlobal = "Turret build ! \n - 200 gold"
+                            self.game.building = False
+                            print(f"Current message: {self.message}")
+                        else:
+                            self.message = "There is already one !"
+                            print(f"Current message: {self.message}")
+                    else:
+                        self.message = "Not enough gold !"
+                        print(f"Current message: {self.message}")
+                    
+        elif self.game.upgrade:      
+            if not self.turret:
+                self.game.messageGlobal = "There is no turret to upgrade!"
+                print(f"Current message: {self.message}")
+            else:
+                if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
+                    # turret 1
+                    if mouseX > t1X and mouseX < t1X + size and mouseY > t1Y and mouseY < t1Y + size:
+                        if self.gatlingPriceScenarium <= self.game.scenarium:
+                            if self.turret.type == "classic":
+                                self.turret.damage *= 2
+                                self.game.scenarium -= self.gatlingPriceScenarium
+                                self.gatlingPriceScenarium *= 2
+                                self.game.messageGlobal = "Turret Upgrade ! \n - "+str(self.gatlingPriceScenarium)+" Scenarium"
+                                self.game.upgrade = False
+                            else:
+                                self.message = "Not the same turret!"
+                                print(f"Current message: {self.message}")
+                        else:
+                            self.message = "Not enough scenariom !"
+                            print(f"Current message: {self.message}")
+
+                    # turret 2
+                    if mouseX > t2X and mouseX < t2X + size and mouseY > t2Y and mouseY < t2Y + size:
+                        if self.sniperPriceScenarium <= self.game.scenarium:
+                            if self.turret.type == "sniper":
+                                self.turret.damage *= 2
+                                self.game.scenarium -= self.sniperPriceScenarium
+                                self.sniperPriceScenarium *= 2
+                                self.game.messageGlobal = "Turret Upgrade ! \n - "+str(self.sniperPriceScenarium)+" Scenarium"
+                                self.game.upgrade = False
+                            else:
+                                self.message = "Not the same turret!"
+                                print(f"Current message: {self.message}")
+                        else:
+                            self.message = "Not enough scenariom !"
+                            print(f"Current message: {self.message}")
+                    # turret 3
+                    if mouseX > t3X and mouseX < t3X + size and mouseY > t3Y and mouseY < t3Y + size:
+                        if self.teslaPriceScenarium <= self.game.scenarium:
+                            if self.turret.type == "tesla":
+                                self.turret.damage *= 2
+                                self.game.scenarium -= self.teslaPriceScenarium
+                                self.teslaPriceScenarium *= 2
+                                self.game.messageGlobal = "Turret Upgrade ! \n - "+str(self.teslaPriceScenarium)+" Scenarium"
+                                self.game.upgrade = False
+                            else:
+                                self.message = "Not the same turret!"
+                                print(f"Current message: {self.message}")
+                        else:
+                            self.message = "Not enough scenariom !"
+                            print(f"Current message: {self.message}")
+            if not self.messageCooldown.elapsed():
+                self.game.messageGlobal = ""
+                self.message = ""
+                print(f"Current message: {self.message}")
+        
 
 class Turret(GameObject):
     
@@ -102,6 +220,7 @@ class Turret(GameObject):
         self.range = 80
         self.target = None
         self.type = "classic"
+        self.damage = 1
     
     def getDistance(self, enemy):
         x = enemy.x+enemy.w/2
@@ -144,7 +263,7 @@ class Turret(GameObject):
         directionY = (self.target.y + self.target.h/2 + self.target.speedVect["y"]*self.target.speed*10) - (self.y + self.h/2)
         norme = math.sqrt(directionX**2 + directionY**2)
         direction = {"x": directionX/norme, "y": directionY/norme}
-        self.game.bullets.add(Bullet(self.x + self.w/2, self.y + self.h/2, 2, 2, direction, self.type, self.range))
+        self.game.bullets.add(Bullet(self.x + self.w/2, self.y + self.h/2, 2, 2, direction, self.type, self.range,self.damage))
 
 class Sniper(Turret):
     
@@ -153,6 +272,7 @@ class Sniper(Turret):
         self.fireCooldown = tweening.TimedBool(60*3)
         self.range = 120
         self.type = "sniper"
+        self.damage = 10
 
 class Tesla(Turret):
     
@@ -161,3 +281,4 @@ class Tesla(Turret):
         self.fireCooldown = tweening.TimedBool(60*2)
         self.range = 60
         self.type = "tesla"
+        self.damage = 25
