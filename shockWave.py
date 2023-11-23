@@ -4,8 +4,8 @@ import tweening
 
 class ShockWave(Bullet):
 
-    def __init__(self, x, y, w, h, d, range):
-        super().__init__(x, y, w, h, d, "tesla", range)
+    def __init__(self, x, y, w, h, d, range, damage):
+        super().__init__(x, y, w, h, d, "tesla", range, damage)
         self.radius = tweening.TimedValue(range, f="easeOutCubic")
         self.type = "tesla"
     

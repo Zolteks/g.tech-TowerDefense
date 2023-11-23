@@ -25,8 +25,8 @@ class Game:
         self.building = False
         self.upgrade = False
         self.life = 20
-        self.gold = 250
-        self.scenarium = 25
+        self.gold = 0
+        self.scenarium = 0
         self.messageGlobal = ""
         self.messageGlobalCD = tweening.TimedBool(60*2)
         self.enemySpawnCD = tweening.TimedBool(60*2)
@@ -74,8 +74,8 @@ class Game:
         self.enemySpawnCD.reset()
         self.building = False
         self.life = 20
-        self.gold = 100000
-        self.scenarium = 0
+        self.gold = 1000
+        self.scenarium = 1000
         self.enemySpawnCD = tweening.TimedBool(60*2)
         self.enemies = Intellist(50)
         self.bullets = Intellist(100)
@@ -134,13 +134,22 @@ class Game:
         
     def drawMenu(self):
         pyxel.cls(0)
-#         pyxel.text(32, 72, "L_Click = Open_Build_Menu \n", 7)
-#         pyxel.text(32, 82, "R_Click = Open_Upgrade_Menu \n", 7)
-#         pyxel.text(32, 92, "Backspace = Leave_Open_Menu \n", 7)
+
         pyxel.rect(30, 30, 41, 7, 11)
         pyxel.text(31, 31, "Start Game", 0)
         pyxel.rect(30, 45, 37, 7, 11)
         pyxel.text(31, 46, "Quit Game", 0)
+
+        pyxel.text(50, 70, "Untitled Tower Defense", 10)
+
+        if pyxel.btn(pyxel.KEY_S):
+            pyxel.text(55, 80, "Scuffed Edition !", 10)
+
+        if pyxel.btn(pyxel.KEY_C):
+            pyxel.text(5, 90, "A game by Arthus Meuret", 10)
+            if pyxel.btn(pyxel.KEY_V):
+                pyxel.text(55+50, 90, "and Robin FROUIN", 10)
+        
     
     def drawLevel(self):
         pyxel.cls(13)
@@ -157,6 +166,7 @@ class Game:
         pyxel.text(65, self.screenH-20, f"gold: {self.gold}", 7)
         pyxel.text(65, self.screenH-30, f"scenrium: {self.scenarium}", 7)
         pyxel.text(75, self.screenH-50, self.messageGlobal, 7)
+
         
         # self.player.draw()
         self.enemies.draw()
