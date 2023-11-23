@@ -13,6 +13,7 @@ class Enemy(GameObject):
     
     def update(self, game):
         if self.life < 1:
+            game.gold += 20
             game.enemies.delete(self)
         
         self.x += self.speed * self.speedVect["x"]

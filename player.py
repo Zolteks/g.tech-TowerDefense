@@ -10,6 +10,9 @@ class TurretSpace(GameObject):
         super().__init__(x, y, 20, 20, 7)
         self.game = game
         self.turret = None
+        self.gatlingPrice = 50
+        self.sniperPrice = 100
+        self.teslaPrice = 200
     
     def draw(self):
         if self.turret:
@@ -33,22 +36,25 @@ class TurretSpace(GameObject):
 
             # button 1
             pyxel.rect(t1X, t1Y, 30, 30, 10)
-            pyxel.text(t1X, t1Y + 35, "100g", 7)
+            pyxel.text(t1X, t1Y + 35, str(self.gatlingPrice), 7)
 
             # button 2
             pyxel.rect(t2X, t2Y, 30, 30, 5)
-            pyxel.text(t2X, t2Y + 35, "300g", 7)
+            pyxel.text(t2X, t2Y + 35, str(self.sniperPrice), 7)
             
             # button 3
             pyxel.rect(t3X, t3Y, 30, 30, 11)
-            pyxel.text(t3X, t3Y + 35, "500g", 7)
+            pyxel.text(t3X, t3Y + 35, str(self.teslaPrice), 7)
     
     def placeTurret(self, turretType="classic"):
         if turretType == "classic":
+            self.game.gold -= self.gatlingPrice
             self.turret = Turret(self.game, self.x, self.y, self.w, self.h)
         if turretType == "sniper":
+            self.game.gold -= self.sniperPrice
             self.turret = Sniper(self.game, self.x, self.y, self.w, self.h)
         if turretType == "tesla":
+            self.game.gold -= self.teslaPrice
             self.turret = Tesla(self.game, self.x, self.y, self.w, self.h)
     
     def update(self):
@@ -74,15 +80,15 @@ class TurretSpace(GameObject):
             t3Y = originY + 10
             if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT):
                 # turret 1
-                if mouseX > t1X and mouseX < t1X + size and mouseY > t1Y and mouseY < t1Y + size:
+                if mouseX > t1X and mouseX < t1X + size and mouseY > t1Y and mouseY < t1Y + size and self.game.gold >= self.gatlingPrice:
                     self.game.building.placeTurret("classic")
                     self.game.building = False
                 # turret 2
-                if mouseX > t2X and mouseX < t2X + size and mouseY > t2Y and mouseY < t2Y + size:
+                if mouseX > t2X and mouseX < t2X + size and mouseY > t2Y and mouseY < t2Y + size and self.game.gold >= self.sniperPrice:
                     self.game.building.placeTurret("sniper")
                     self.game.building = False
                 # turret 3
-                if mouseX > t3X and mouseX < t3X + size and mouseY > t3Y and mouseY < t3Y + size:
+                if mouseX > t3X and mouseX < t3X + size and mouseY > t3Y and mouseY < t3Y + size and self.game.gold >= self.teslaPrice:
                     self.game.building.placeTurret("tesla")
                     self.game.building = False
 

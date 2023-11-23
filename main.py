@@ -22,14 +22,14 @@ class Game:
         self.state = "menu"
         self.building = False
         self.life = 20
+        self.gold = 100
+        self.scenarium = 0
         self.enemySpawnCD = tweening.TimedBool(60*2)
         self.enemies = Intellist(50)
         self.bullets = Intellist(100)
         self.turrets = Intellist(10)
-        self.turrets.add(player.TurretSpace(self, 5, 5))
-        self.turrets.add(player.TurretSpace(self, 5 + 25, 5))
-        self.turrets.add(player.TurretSpace(self, 5 + 25 + 25, 5))
-        self.turrets.add(player.TurretSpace(self, 200 - 25, 5))
+        for i in range(7):
+            self.turrets.add(player.TurretSpace(self, 15 + 25*i, 5))
 
         pyxel.run(self.update, self.draw)
     
@@ -107,6 +107,7 @@ class Game:
         pyxel.rect(60, 60, self.screenW-30*4, self.screenH, color)
 
         pyxel.text(65, self.screenH-10, f"life: {self.life}", 7)
+        pyxel.text(65, self.screenH-20, f"gold: {self.gold}", 7)
         # self.player.draw()
         self.enemies.draw()
         self.bullets.draw()
