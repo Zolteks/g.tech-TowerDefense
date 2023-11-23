@@ -1,6 +1,7 @@
 import pyxel
 import math
 import tweening
+import time
 from gameObject import GameObject
 from bullet import Bullet
 
@@ -57,7 +58,7 @@ class TurretSpace(GameObject):
             self.game.gold -= self.teslaPrice
             self.turret = Tesla(self.game, self.x, self.y, self.w, self.h)
     
-    def update(self):
+    def update(self, game):
         mouseX = pyxel.mouse_x
         mouseY = pyxel.mouse_y
         if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) and not self.game.building:

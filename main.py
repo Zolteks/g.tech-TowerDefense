@@ -1,7 +1,8 @@
 import pyxel
 import player
+import random
 from intellist import Intellist
-from enemy import Enemy
+from enemy import *
 import tweening
 
 class Game:
@@ -51,7 +52,7 @@ class Game:
             pyxel.quit()
         self.enemies.update(self)
         self.bullets.update(self)
-        self.turrets.update()
+        self.turrets.update(self)
         self.checkCollisions()
         if self.enemySpawnCD.elapsed():
             self.spawnEnemy()
@@ -77,11 +78,13 @@ class Game:
                     self.bullets.delete(curB)
     
     def spawnEnemy(self):
+        enemyType = [normalEnemy,mediumEnemy,bigEnemy]
+        enemyRandomSpawn = random.choice(enemyType)
         enemyW = 10
         enemyH = 10
         spawnX = 30 + enemyW
         spawnY = self.screenH
-        self.enemies.add(Enemy(spawnX, spawnY, enemyW, enemyH, {"xLimit": self.screenW - 40 -10, "yLimit": 40} ))
+        self.enemies.add(enemyRandomSpawn(spawnX, spawnY, enemyW, enemyH, {"xLimit": self.screenW - 40 -10, "yLimit": 40} ))
     
     def draw(self):
         if self.state == "menu":
@@ -98,6 +101,7 @@ class Game:
     
     def drawLevel(self):
         pyxel.cls(13)
+        
         color = 4
         
         pyxel.rect(0, 0, self.screenW, 30, color)
