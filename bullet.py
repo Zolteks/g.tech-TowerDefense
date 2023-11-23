@@ -19,6 +19,11 @@ class Bullet:
             self.damage = 10
             self.alive = tweening.TimedBool(range/self.speed)
             self.color = 7
+        if bulletType == "tesla":
+            self.speed = 10
+            self.damage = 10
+            self.alive = tweening.TimedBool(range/self.speed)
+            self.color = 7
     
     def update(self, game):
         self.x += self.speed * self.speedVect["x"]
@@ -26,15 +31,6 @@ class Bullet:
         
         if self.alive.elapsed():
             game.bullets.delete(self)
-        
-        # if self.x + self.w > 200:
-        #     game.bullets.delete(self)
-        # if self.x < 0:
-        #     game.bullets.delete(self)
-        # if self.y + self.h > 128:
-        #     game.bullets.delete(self)
-        # if self.y < 0:
-        #     game.bullets.delete(self)
     
     def draw(self):
         pyxel.rectb(self.x, self.y, self.w, self.h, self.color)

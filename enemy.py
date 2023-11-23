@@ -91,6 +91,10 @@ class bigEnemy(GameObject):
         self.x += self.speed * self.speedVect["x"]
         self.y += self.speed * self.speedVect["y"]
         
+        if not self.passed and game.screenW-60+30 > self.x and game.screenW-60 < self.x+self.w and game.screenH > self.y and game.screenH-10 < self.y+self.h:
+            game.life -= 2
+            self.passed = True
+        
         if self.y < self.path["yLimit"]:
             self.speedVect = {"x": 1, "y": 0}
             

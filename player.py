@@ -11,8 +11,9 @@ class TurretSpace(GameObject):
         super().__init__(x, y, 20, 20, 7)
         self.game = game
         self.turret = None
-        self.normalPrice = 50
+        self.gatlingPrice = 50
         self.sniperPrice = 100
+        self.teslaPrice = 200
     
     def draw(self):
         if self.turret:
@@ -21,43 +22,76 @@ class TurretSpace(GameObject):
             pyxel.rectb(self.x, self.y, self.w, self.h, self.color)
             pyxel.line(self.x, self.y, self.x + self.w-1, self.y + self.h-1, self.color)
             pyxel.line(self.x + self.w-1, self.y, self.x, self.y + self.h-1, self.color)
+        
+        if self.game.building:
+            originX = 35
+            originY = 35
+            t1X = originX + 10
+            t1Y = originY + 10
+            t2X = t1X + 40
+            t2Y = t1Y
+            t3X = t2X + 40
+            t3Y = originY + 10
+            pyxel.rect(originX, originY, self.game.screenW - originX*2, self.game.screenH/2, 0)
+            pyxel.rectb(originX, originY, self.game.screenW - originX*2, self.game.screenH/2, 10)
+
+            # button 1
+            pyxel.rect(t1X, t1Y, 30, 30, 10)
+            pyxel.text(t1X, t1Y + 35, str(self.gatlingPrice), 7)
+
+            # button 2
+            pyxel.rect(t2X, t2Y, 30, 30, 5)
+            pyxel.text(t2X, t2Y + 35, str(self.sniperPrice), 7)
+            
+            # button 3
+            pyxel.rect(t3X, t3Y, 30, 30, 11)
+            pyxel.text(t3X, t3Y + 35, str(self.teslaPrice), 7)
     
     def placeTurret(self, turretType="classic"):
         if turretType == "classic":
+            self.game.gold -= self.gatlingPrice
             self.turret = Turret(self.game, self.x, self.y, self.w, self.h)
         if turretType == "sniper":
+            self.game.gold -= self.sniperPrice
             self.turret = Sniper(self.game, self.x, self.y, self.w, self.h)
+        if turretType == "tesla":
+            self.game.gold -= self.teslaPrice
+            self.turret = Tesla(self.game, self.x, self.y, self.w, self.h)
     
     def update(self, game):
         mouseX = pyxel.mouse_x
         mouseY = pyxel.mouse_y
-        if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
+        if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) and not self.game.building:
             if mouseX > self.x and mouseX < self.x+self.w and mouseY > self.y and mouseY < self.y+self.h:
-                if self.normalPrice <= game.ressources.intGold:
-                    self.placeTurret("classic")
-                    game.ressources.intGold -= self.normalPrice
-                    game.ressources.message  = "Classic Turret Done ! - 50 Gold"
-                    game.ressources.messageCD.reset()
-                else :
-                    game.ressources.message  = "Not enough money !"
-                    game.ressources.messageCD.reset()
-        elif pyxel.btnp(pyxel.MOUSE_BUTTON_RIGHT):
-            if mouseX > self.x and mouseX < self.x+self.w and mouseY > self.y and mouseY < self.y+self.h:
-                if self.sniperPrice <= game.ressources.intGold :
-                    self.placeTurret("sniper")
-                    game.ressources.intGold -= self.sniperPrice
-                    game.ressources.message  = "Sniper Turret Done ! - 100 Gold"
-                    game.ressources.messageCD.reset()
-                else :
-                    game.ressources.message  = "Not enough money !"
-                    game.ressources.messageCD.reset()
-        
-        if game.ressources.messageCD.elapsed():
-            game.ressources.message = ""
-        
+                self.game.building = self
+                # self.placeTurret("classic")
+        elif pyxel.btn(pyxel.MOUSE_BUTTON_RIGHT):
+            self.game.building = False
         if self.turret:
             self.turret.update()
-            game.ressources.message=""
+        if self.game.building:
+            originX = 35
+            originY = 35
+            size = 30
+            t1X = originX + 10
+            t1Y = originY + 10
+            t2X = t1X + 40
+            t2Y = t1Y
+            t3X = t2X + 40
+            t3Y = originY + 10
+            if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT):
+                # turret 1
+                if mouseX > t1X and mouseX < t1X + size and mouseY > t1Y and mouseY < t1Y + size and self.game.gold >= self.gatlingPrice:
+                    self.game.building.placeTurret("classic")
+                    self.game.building = False
+                # turret 2
+                if mouseX > t2X and mouseX < t2X + size and mouseY > t2Y and mouseY < t2Y + size and self.game.gold >= self.sniperPrice:
+                    self.game.building.placeTurret("sniper")
+                    self.game.building = False
+                # turret 3
+                if mouseX > t3X and mouseX < t3X + size and mouseY > t3Y and mouseY < t3Y + size and self.game.gold >= self.teslaPrice:
+                    self.game.building.placeTurret("tesla")
+                    self.game.building = False
 
 class Turret(GameObject):
     
@@ -119,14 +153,11 @@ class Sniper(Turret):
         self.fireCooldown = tweening.TimedBool(60*3)
         self.range = 120
         self.type = "sniper"
-        
-class Ressources :
-    def __init__(self):
-        self.messageCD = tweening.TimedBool(60*2)
-        self.intGold = 100
-        self.strGold = str(self.intGold)
-        
-        self.intScenarium = 0
-        self.strScenarium = str(self.intScenarium)
-        
-        self.message = ""
+
+class Tesla(Turret):
+    
+    def __init__(self, game, x, y, w, h):
+        super().__init__(game, x, y, w, h, 11)
+        self.fireCooldown = tweening.TimedBool(60*2)
+        self.range = 60
+        self.type = "tesla"
