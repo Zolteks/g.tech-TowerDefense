@@ -23,9 +23,12 @@ class Game:
         
         self.state = "menu"
         self.building = False
+        self.upgrade = False
         self.life = 20
-        self.gold = 100
-        self.scenarium = 0
+        self.gold = 250
+        self.scenarium = 25
+        self.messageGlobal = ""
+        self.messageGlobalCD = tweening.TimedBool(60*2)
         self.enemySpawnCD = tweening.TimedBool(60*2)
         self.enemies = Intellist(50)
         self.bullets = Intellist(100)
@@ -131,6 +134,9 @@ class Game:
         
     def drawMenu(self):
         pyxel.cls(0)
+#         pyxel.text(32, 72, "L_Click = Open_Build_Menu \n", 7)
+#         pyxel.text(32, 82, "R_Click = Open_Upgrade_Menu \n", 7)
+#         pyxel.text(32, 92, "Backspace = Leave_Open_Menu \n", 7)
         pyxel.rect(30, 30, 41, 7, 11)
         pyxel.text(31, 31, "Start Game", 0)
         pyxel.rect(30, 45, 37, 7, 11)
@@ -149,6 +155,9 @@ class Game:
 
         pyxel.text(65, self.screenH-10, f"life: {self.life}", 7)
         pyxel.text(65, self.screenH-20, f"gold: {self.gold}", 7)
+        pyxel.text(65, self.screenH-30, f"scenrium: {self.scenarium}", 7)
+        pyxel.text(75, self.screenH-50, self.messageGlobal, 7)
+        
         # self.player.draw()
         self.enemies.draw()
         self.bullets.draw()
