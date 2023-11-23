@@ -102,9 +102,8 @@ class Game:
                 if curB.type!="tesla" and self.rect_overlap(curB, curE):
                     curE.takeDamage(curB.damage)
                     self.bullets.delete(curB)
-                elif self.circ_overlap(curB, curE):
+                elif curB.type=="tesla" and self.circ_overlap(curB, curE):
                     curE.takeDamage(curB.damage)
-                    self.bullets.delete(curB)
     
     def spawnEnemy(self):
         # enemyType = [normalEnemy,mediumEnemy,bigEnemy]
