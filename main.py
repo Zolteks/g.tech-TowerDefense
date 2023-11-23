@@ -1,6 +1,7 @@
 import pyxel
 import player
 import random
+import math
 from intellist import Intellist
 from enemy import *
 import tweening
@@ -70,7 +71,7 @@ class Game:
         self.enemySpawnCD.reset()
         self.building = False
         self.life = 20
-        self.gold = 100
+        self.gold = 100000
         self.scenarium = 0
         self.enemySpawnCD = tweening.TimedBool(60*2)
         self.enemies = Intellist(50)
@@ -81,17 +82,27 @@ class Game:
     
     def rect_overlap(self, bullet, enemy):
         return bullet.x < enemy.x + enemy.w and bullet.x + bullet.w > enemy.x and bullet.y < enemy.y + enemy.h and bullet.y + bullet.h > enemy.y
+
+    def circ_overlap(self, bullet, enemy):
+        enemyCenterX = enemy.x + enemy.w
+        enemyCenterY = enemy.y + enemy.h
+        distToEnemy = math.sqrt((enemyCenterX-bullet.x)**2 + (enemyCenterY-bullet.y)**2)
+        return distToEnemy < bullet.radius.value()
+
     
     def checkCollisions(self):
-        for i in range(self.bullets.size):
-            if not self.bullets.array[i]:
+        for j in range(self.enemies.size):
+            if not self.enemies.array[j]:
                 continue
-            curB = self.bullets.array[i]
-            for j in range(self.enemies.size):
-                if not self.enemies.array[j]:
+            curE = self.enemies.array[j]
+            for i in range(self.bullets.size):
+                if not self.bullets.array[i]:
                     continue
-                curE = self.enemies.array[j]
-                if self.rect_overlap(curB, curE):
+                curB = self.bullets.array[i]
+                if curB.type!="tesla" and self.rect_overlap(curB, curE):
+                    curE.takeDamage(curB.damage)
+                    self.bullets.delete(curB)
+                elif self.circ_overlap(curB, curE):
                     curE.takeDamage(curB.damage)
                     self.bullets.delete(curB)
     
